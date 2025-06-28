@@ -51,7 +51,7 @@ export const initialUserData: { [key: string]: UserProgress } = {
   sarat: {
     userId: 'sarat',
     username: 'sarat',
-    password: 'c2FyYXQgZXJyaXB1a3U=',
+    password: '==ARzUSVzEWMChVY5pEWadWUYlVeGJzY',
     assignments: {
       'frontend-challenge': {
         id: 'frontend-challenge',
