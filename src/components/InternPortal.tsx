@@ -149,7 +149,7 @@ DELIVERABLES:
 • Source code with documentation
 • Deployment guide and screenshots
 
-DEADLINE: June 30, 2025
+DEADLINE: July 3, 2025
 
 Technical Stack:
 • AWS EC2 (for hosting)
@@ -515,7 +515,7 @@ Good luck with your assignment!
             <div className="flex flex-wrap items-center gap-2 sm:gap-4">
               <div className="flex items-center text-xs sm:text-sm text-gray-600">
                 <Clock size={14} className="mr-1" />
-                <span>Due: June 30, 2025</span>
+                <span>Due: July 3, 2025</span>
               </div>
               <div className="flex items-center text-xs sm:text-sm text-gray-600">
                 <Award size={14} className="mr-1" />
