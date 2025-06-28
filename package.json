@@ -4,10 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-  "start": "serve -s build",
-  "build": "react-scripts build"
-}
-,
+    "build": "vite build",
+    "start": "serve -s dist"
+  },
   "dependencies": {
     "lucide-react": "^0.344.0",
     "react": "^18.3.1",
