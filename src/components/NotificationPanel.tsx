@@ -57,13 +57,13 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({
       )}
       
       {/* Panel */}
-      <div className={`fixed top-0 right-0 h-full w-96 bg-white shadow-2xl transform transition-transform duration-300 ease-in-out z-50 ${
+      <div className={`fixed top-0 right-0 h-full w-full sm:w-96 bg-white shadow-2xl transform transition-transform duration-300 ease-in-out z-50 ${
         isOpen ? 'translate-x-0' : 'translate-x-full'
       }`}>
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b bg-gradient-to-r from-purple-600 to-blue-600 text-white">
+        <div className="flex items-center justify-between p-4 sm:p-6 border-b bg-gradient-to-r from-purple-600 to-blue-600 text-white">
           <div className="flex items-center space-x-2">
-            <Bell size={20} />
+            <Bell size={18} />
             <h2 className="text-lg font-semibold">Notifications</h2>
           </div>
           <button
@@ -77,16 +77,16 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({
         {/* Notifications List */}
         <div className="h-full overflow-y-auto pb-20">
           {notifications.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-64 text-gray-500">
+            <div className="flex flex-col items-center justify-center h-64 text-gray-500 px-4">
               <Bell size={48} className="mb-4 opacity-50" />
-              <p>No notifications yet</p>
+              <p className="text-center">No notifications yet</p>
             </div>
           ) : (
-            <div className="p-4 space-y-3">
+            <div className="p-3 sm:p-4 space-y-3">
               {notifications.map((notification) => (
                 <div
                   key={notification.id}
-                  className={`p-4 rounded-lg border transition-all duration-200 hover:shadow-md cursor-pointer ${
+                  className={`p-3 sm:p-4 rounded-lg border transition-all duration-200 hover:shadow-md cursor-pointer ${
                     notification.read 
                       ? 'bg-gray-50 border-gray-200' 
                       : 'bg-blue-50 border-blue-200 shadow-sm'
@@ -125,7 +125,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({
 
         {/* Mark All Read Button */}
         {notifications.some(n => !n.read) && (
-          <div className="absolute bottom-0 left-0 right-0 p-4 bg-white border-t">
+          <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4 bg-white border-t">
             <button
               onClick={() => {
                 notifications
