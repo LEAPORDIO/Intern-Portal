@@ -51,6 +51,7 @@ const InternPortal: React.FC<InternPortalProps> = ({
   const [liveUpdates, setLiveUpdates] = useState<LiveUpdate[]>([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const userDataManager = HybridUserDataManager.getInstance();
 
@@ -204,28 +205,39 @@ Good luck with your assignment!
   };
 
   const handleSubmitAssignment = async () => {
-    if (submissionUrl.trim()) {
-      try {
-        const submission = {
-          type: 'url' as const,
-          content: submissionUrl.trim()
-        };
-        
-        await userDataManager.submitAssignment(userData.userId, 'frontend-challenge', submission);
-        
-        // Refresh user data
-        await onRefreshData();
+    if (!submissionUrl.trim()) {
+      alert('Please enter a valid URL');
+      return;
+    }
 
-        // Immediately refresh live updates to show user's submission
-        setLiveUpdates(generateLiveUpdates());
+    setIsSubmitting(true);
+    
+    try {
+      // Create submission object with only URL content
+      const submission = {
+        type: 'url' as const,
+        content: submissionUrl.trim()
+      };
+      
+      // Submit the assignment with URL only
+      await userDataManager.submitAssignment(userData.userId, 'frontend-challenge', submission);
+      
+      // Refresh user data
+      await onRefreshData();
 
-        setSubmissionComplete(true);
-        setSubmissionUrl('');
-        
-        setTimeout(() => setSubmissionComplete(false), 4000);
-      } catch (error) {
-        console.error('Failed to submit assignment:', error);
-      }
+      // Immediately refresh live updates to show user's submission
+      setLiveUpdates(generateLiveUpdates());
+
+      // Show success animation
+      setSubmissionComplete(true);
+      setSubmissionUrl('');
+      
+      setTimeout(() => setSubmissionComplete(false), 4000);
+    } catch (error) {
+      console.error('Failed to submit assignment:', error);
+      alert('Failed to submit assignment. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -590,8 +602,13 @@ Good luck with your assignment!
               <p className="text-gray-600 mb-4 text-sm sm:text-base">
                 You submitted this assignment on {assignment.submittedAt ? new Date(assignment.submittedAt).toLocaleDateString() : 'Unknown'}
               </p>
-              <div className="bg-blue-50 rounded-lg p-3 sm:p-4">
+              <div className="bg-blue-50 rounded-lg p-3 sm:p-4 mb-4">
                 <p className="text-blue-800 text-xs sm:text-sm">
+                  Your submission URL: <span className="font-medium break-all">{assignment.submission?.content || 'N/A'}</span>
+                </p>
+              </div>
+              <div className="bg-green-50 rounded-lg p-3 sm:p-4">
+                <p className="text-green-800 text-xs sm:text-sm">
                   Results will be announced on <span className="font-semibold">July 3rd, 2025</span>
                 </p>
               </div>
@@ -606,7 +623,7 @@ Good luck with your assignment!
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   <Link className="inline mr-2" size={16} />
-                  Submit Project URL
+                  Submit Project URL *
                 </label>
                 <input
                   type="url"
@@ -614,6 +631,7 @@ Good luck with your assignment!
                   className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500 text-sm sm:text-base"
                   value={submissionUrl}
                   onChange={(e) => setSubmissionUrl(e.target.value)}
+                  disabled={isSubmitting}
                 />
                 <p className="text-xs text-gray-500 mt-1">
                   Provide a link to your GitHub repository, live project, or portfolio showcasing your work
@@ -634,10 +652,20 @@ Good luck with your assignment!
 
               <button
                 onClick={handleSubmitAssignment}
-                disabled={!submissionUrl.trim() || assignment.status === 'submitted'}
-                className="w-full py-2.5 sm:py-3 px-4 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium text-sm sm:text-base"
+                disabled={!submissionUrl.trim() || assignment.status === 'submitted' || isSubmitting}
+                className="w-full py-2.5 sm:py-3 px-4 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium text-sm sm:text-base flex items-center justify-center space-x-2"
               >
-                Submit Assignment URL
+                {isSubmitting ? (
+                  <>
+                    <RefreshCw className="animate-spin" size={16} />
+                    <span>Submitting...</span>
+                  </>
+                ) : (
+                  <>
+                    <Send size={16} />
+                    <span>Submit Assignment URL</span>
+                  </>
+                )}
               </button>
             </div>
           </div>
