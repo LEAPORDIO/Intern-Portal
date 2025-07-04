@@ -23,7 +23,8 @@ import {
   RefreshCw,
   Wifi,
   WifiOff,
-  Menu
+  Menu,
+  Link
 } from 'lucide-react';
 import { UserProgress, generateLiveUpdates, LiveUpdate } from '../data/userData';
 import { HybridUserDataManager } from '../data/hybridUserDataManager';
@@ -44,7 +45,6 @@ const InternPortal: React.FC<InternPortalProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [submissionComplete, setSubmissionComplete] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [submissionUrl, setSubmissionUrl] = useState('');
   const [userData, setUserData] = useState<UserProgress>(user);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -158,10 +158,10 @@ Technical Stack:
 • Basic server setup knowledge
 
 SUBMISSION GUIDELINES:
-• Ensure your code is well-commented and follows best practices
-• Include a README.md with setup instructions
-• Test your application thoroughly before submission
-• ZIP files should contain the complete project structure
+• Submit your project via GitHub repository URL
+• Include a comprehensive README.md with setup instructions
+• Ensure your repository is public or provide access
+• Include screenshots and documentation
 
 EVALUATION CRITERIA:
 • Code quality and organization (25%)
@@ -204,11 +204,11 @@ Good luck with your assignment!
   };
 
   const handleSubmitAssignment = async () => {
-    if (selectedFile || submissionUrl) {
+    if (submissionUrl.trim()) {
       try {
         const submission = {
-          type: selectedFile ? 'file' as const : 'url' as const,
-          content: selectedFile ? submissionUrl : submissionUrl
+          type: 'url' as const,
+          content: submissionUrl.trim()
         };
         
         await userDataManager.submitAssignment(userData.userId, 'frontend-challenge', submission);
@@ -220,7 +220,6 @@ Good luck with your assignment!
         setLiveUpdates(generateLiveUpdates());
 
         setSubmissionComplete(true);
-        setSelectedFile(null);
         setSubmissionUrl('');
         
         setTimeout(() => setSubmissionComplete(false), 4000);
@@ -603,74 +602,42 @@ Good luck with your assignment!
             <h3 className="text-base sm:text-lg font-semibold mb-4">{assignment.title}</h3>
             
             <div className="space-y-4 sm:space-y-6">
-              {/* File Upload */}
+              {/* URL Submission */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Upload Project Files (ZIP only)
-                </label>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 sm:p-6 text-center hover:border-purple-400 transition-colors">
-                  <Upload className="mx-auto h-8 w-8 sm:h-12 sm:w-12 text-gray-400 mb-3 sm:mb-4" />
-                  <div className="flex text-xs sm:text-sm text-gray-600">
-                    <label className="relative cursor-pointer bg-white rounded-md font-medium text-purple-600 hover:text-purple-500">
-                      <span>Upload a file</span>
-                      <input
-                        type="file"
-                        className="sr-only"
-                        accept=".zip"
-                        onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
-                      />
-                    </label>
-                    <p className="pl-1">or drag and drop</p>
-                  </div>
-                  <p className="text-xs text-gray-500 mt-1">ZIP files up to 50MB</p>
-                  {selectedFile && (
-                    <div className="mt-2 text-xs sm:text-sm text-green-600">
-                      ✓ {selectedFile.name} selected
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* URL Alternative */}
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300" />
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">OR</span>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Submit via URL (GitHub, Portfolio, etc.)
+                  <Link className="inline mr-2" size={16} />
+                  Submit Project URL
                 </label>
                 <input
                   type="url"
-                  placeholder="https://github.com/username/project"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500 text-sm sm:text-base"
+                  placeholder="https://github.com/username/project or https://your-portfolio.com/project"
+                  className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500 text-sm sm:text-base"
                   value={submissionUrl}
                   onChange={(e) => setSubmissionUrl(e.target.value)}
                 />
+                <p className="text-xs text-gray-500 mt-1">
+                  Provide a link to your GitHub repository, live project, or portfolio showcasing your work
+                </p>
               </div>
 
               {/* Submission Guidelines */}
               <div className="bg-blue-50 rounded-lg p-3 sm:p-4">
                 <h4 className="font-medium text-blue-900 mb-2 text-sm sm:text-base">Submission Guidelines</h4>
                 <ul className="text-xs sm:text-sm text-blue-800 space-y-1">
-                  <li>• Ensure your code is well-commented and follows best practices</li>
-                  <li>• Include a README.md with setup instructions</li>
+                  <li>• Ensure your GitHub repository is public or provide appropriate access</li>
+                  <li>• Include a comprehensive README.md with setup instructions</li>
+                  <li>• Add screenshots and documentation in your repository</li>
                   <li>• Test your application thoroughly before submission</li>
-                  <li>• ZIP files should contain the complete project structure</li>
+                  <li>• For live projects, ensure they are accessible and working</li>
                 </ul>
               </div>
 
               <button
                 onClick={handleSubmitAssignment}
-                disabled={(!selectedFile && !submissionUrl) || assignment.status === 'submitted'}
+                disabled={!submissionUrl.trim() || assignment.status === 'submitted'}
                 className="w-full py-2.5 sm:py-3 px-4 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium text-sm sm:text-base"
               >
-                Submit Assignment
+                Submit Assignment URL
               </button>
             </div>
           </div>
@@ -684,7 +651,7 @@ Good luck with your assignment!
                 <div className="text-4xl sm:text-6xl mb-4 animate-bounce">🎉</div>
                 <h3 className="text-lg sm:text-2xl font-bold text-green-600 mb-2">Submission Successful!</h3>
                 <p className="text-gray-700 mb-4 text-sm sm:text-base">
-                  Your assignment has been submitted successfully. Our team will review it shortly.
+                  Your assignment URL has been submitted successfully. Our team will review it shortly.
                 </p>
                 <p className="text-xs sm:text-sm text-gray-600">
                   Results will be announced on <span className="font-semibold">July 3rd, 2025</span>
