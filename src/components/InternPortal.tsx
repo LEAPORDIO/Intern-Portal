@@ -206,20 +206,20 @@ Good luck with your assignment!
 
   const handleSubmitAssignment = async () => {
     if (!submissionUrl.trim()) {
-      alert('Please enter a valid URL');
+      alert('Please enter a valid URL before submitting.');
       return;
     }
 
     setIsSubmitting(true);
     
     try {
-      // Create submission object with only URL content
+      // Create submission that matches backend expectations
+      // Send URL as file content to match the backend structure
       const submission = {
-        type: 'url' as const,
-        content: submissionUrl.trim()
+        type: 'file' as const,  // Backend expects 'file' type
+        content: submissionUrl.trim()  // Send URL as the file content
       };
       
-      // Submit the assignment with URL only
       await userDataManager.submitAssignment(userData.userId, 'frontend-challenge', submission);
       
       // Refresh user data
@@ -228,7 +228,6 @@ Good luck with your assignment!
       // Immediately refresh live updates to show user's submission
       setLiveUpdates(generateLiveUpdates());
 
-      // Show success animation
       setSubmissionComplete(true);
       setSubmissionUrl('');
       
@@ -602,13 +601,21 @@ Good luck with your assignment!
               <p className="text-gray-600 mb-4 text-sm sm:text-base">
                 You submitted this assignment on {assignment.submittedAt ? new Date(assignment.submittedAt).toLocaleDateString() : 'Unknown'}
               </p>
-              <div className="bg-blue-50 rounded-lg p-3 sm:p-4 mb-4">
+              
+              {/* Show submitted URL if available */}
+              {userData.submissions && Object.values(userData.submissions).length > 0 && (
+                <div className="bg-blue-50 rounded-lg p-3 sm:p-4 mb-4">
+                  <p className="text-blue-800 text-xs sm:text-sm mb-2">
+                    <strong>Submitted URL:</strong>
+                  </p>
+                  <div className="bg-white rounded p-2 text-blue-900 text-xs sm:text-sm break-all">
+                    {Object.values(userData.submissions)[0]?.content || 'URL not available'}
+                  </div>
+                </div>
+              )}
+              
+              <div className="bg-blue-50 rounded-lg p-3 sm:p-4">
                 <p className="text-blue-800 text-xs sm:text-sm">
-                  Your submission URL: <span className="font-medium break-all">{assignment.submission?.content || 'N/A'}</span>
-                </p>
-              </div>
-              <div className="bg-green-50 rounded-lg p-3 sm:p-4">
-                <p className="text-green-800 text-xs sm:text-sm">
                   Results will be announced on <span className="font-semibold">July 3rd, 2025</span>
                 </p>
               </div>
@@ -623,7 +630,7 @@ Good luck with your assignment!
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   <Link className="inline mr-2" size={16} />
-                  Submit Project URL *
+                  Submit Project URL
                 </label>
                 <input
                   type="url"
