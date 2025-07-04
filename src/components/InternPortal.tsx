@@ -208,7 +208,7 @@ Good luck with your assignment!
       try {
         const submission = {
           type: selectedFile ? 'file' as const : 'url' as const,
-          content: selectedFile ? selectedFile.name : submissionUrl
+          content: selectedFile ? submissionUrl : submissionUrl
         };
         
         await userDataManager.submitAssignment(userData.userId, 'frontend-challenge', submission);
